@@ -1,6 +1,5 @@
-package com.example.listoffilmssequenia;
+package com.example.listoffilmssequenia.data.ui;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +9,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.listoffilmssequenia.R;
+import com.example.listoffilmssequenia.data.data.model.Film;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -37,8 +38,8 @@ public class FilmsAdapter extends RecyclerView.Adapter<FilmsAdapter.Holder> {
     }
 
     public void setFilms(List<Film> films) {
+        this.films.clear();
         this.films.addAll(films);
-        Log.d("ListFragment"+"=", "" + this.films.size());
         notifyDataSetChanged();
     }
 

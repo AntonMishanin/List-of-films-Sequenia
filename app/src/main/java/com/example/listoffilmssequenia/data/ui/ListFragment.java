@@ -1,4 +1,4 @@
-package com.example.listoffilmssequenia;
+package com.example.listoffilmssequenia.data.ui;
 
 
 import android.os.Bundle;
@@ -16,16 +16,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.listoffilmssequenia.R;
+import com.example.listoffilmssequenia.data.data.network.RetrofitClient;
+import com.example.listoffilmssequenia.data.data.model.Film;
+import com.example.listoffilmssequenia.data.data.model.ResponseFilms;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 
 
-public class ListFragment extends Fragment implements OnClickFilmListener, OnClickGenreListener {
+public class ListFragment extends Fragment implements OnClickFilmListener, OnClickGenreListener, com.example.listoffilmssequenia.data.ui.View {
 
     private static final String TAG = "ListFragment";
     private FilmsAdapter filmsAdapter;
@@ -33,11 +37,20 @@ public class ListFragment extends Fragment implements OnClickFilmListener, OnCli
 
     private List<Film> films = new ArrayList<>();
     private List<String> genres = new ArrayList<>();
+    List<String> genres2 = new ArrayList<>();
+    MvpPresenter mvpPresenter;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_list, container, false);
+
+
+        MvpInteractor mvpInteractor = new MvpInteractor();
+        mvpPresenter = new MvpPresenter(this, mvpInteractor);
+        mvpPresenter.getListOfFilms();
+
+     //   ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Фильмы");
 
         filmsAdapter = new FilmsAdapter(this);
         genresAdapter = new GenresAdapter(this);
@@ -52,28 +65,6 @@ public class ListFragment extends Fragment implements OnClickFilmListener, OnCli
         recyclerViewGenre.setHasFixedSize(true);
         recyclerViewGenre.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerViewGenre.setAdapter(genresAdapter);
-
-        RetrofitClient.getApi().getListOfFilms().enqueue(new Callback<ResponseFilms>() {
-            @Override
-            public void onResponse(@NonNull Call<ResponseFilms> call, @NonNull Response<ResponseFilms> response) {
-                ResponseFilms responseFilms = response.body();
-                films.addAll(responseFilms.getFilms());
-                filmsAdapter.setFilms(responseFilms.getFilms());
-
-                Log.d("ListFragment", "" + films.size());
-                for (int i = 0; i < films.size(); i++) {
-                    genres.addAll(films.get(i).getGenres());
-                }
-
-                genresAdapter.setGenres(genres);
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<ResponseFilms> call, @NonNull Throwable t) {
-                Log.d(TAG, "onFailure: " + t.getMessage());
-            }
-        });
-
 
         return view;
     }
@@ -94,7 +85,42 @@ public class ListFragment extends Fragment implements OnClickFilmListener, OnCli
     }
 
     @Override
-    public void onClickGenre(int position) {
+    public void onClickGenre(int position, boolean isGenreChecked) {
+        if(!isGenreChecked){
+            filmsAdapter.setFilms(films);
+        }else{
+            mvpPresenter.onClickGenre(int position, boolean isGenreChecked);
+            /*
+            List<Film> filmsCurrentGenre = new ArrayList<>();
+            for (int i = 0; i < films.size(); i++) {
+                for (int j = 0; j < films.get(i).getGenres().size(); j++) {
+                    if(films.get(i).getGenres().get(j).equals(genres2.get(position))){
+                        filmsCurrentGenre.add(films.get(i));
+                    }
+                }
+            }
+            filmsAdapter.setFilms(filmsCurrentGenre);
+            */
+        }
+    }
 
+    @Override
+    public void setPressedGenreFilms(List<Film> filmsCurrentGenre) {
+        filmsAdapter.setFilms(filmsCurrentGenre);
+    }
+
+    @Override
+    public void setListOfFilms(List<Film> films) {
+        filmsAdapter.setFilms(films);
+    }
+
+    @Override
+    public void setListOfGenres(List<String> genres2) {
+        genresAdapter.setGenres(genres2);
+    }
+
+    @Override
+    public void setError(Throwable t) {
+        Log.d(TAG, "onFailure: " + t.getMessage());
     }
 }

@@ -1,4 +1,4 @@
-package com.example.listoffilmssequenia;
+package com.example.listoffilmssequenia.data.data.network;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

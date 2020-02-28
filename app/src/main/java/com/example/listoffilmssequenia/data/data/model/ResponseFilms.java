@@ -1,4 +1,4 @@
-package com.example.listoffilmssequenia;
+package com.example.listoffilmssequenia.data.data.model;
 
 import java.util.List;
 

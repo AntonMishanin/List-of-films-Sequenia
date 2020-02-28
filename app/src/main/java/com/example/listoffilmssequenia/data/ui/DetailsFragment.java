@@ -1,4 +1,4 @@
-package com.example.listoffilmssequenia;
+package com.example.listoffilmssequenia.data.ui;
 
 
 import android.os.Bundle;
@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.listoffilmssequenia.R;
+import com.example.listoffilmssequenia.data.data.model.Film;
 import com.squareup.picasso.Picasso;
 
 
@@ -27,6 +29,10 @@ public class DetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_details, container, false);
+
+      //  Toolbar toolbar = view.findViewById(R.id.toolbar_fragment_details);
+    //    ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(film.getName());
+    //    setSupportActionBar(toolbar);
 
         TextView textName = view.findViewById(R.id.film_name);
         TextView textYears = view.findViewById(R.id.film_year);
