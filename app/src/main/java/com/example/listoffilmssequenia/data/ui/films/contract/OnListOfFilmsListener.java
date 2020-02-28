@@ -1,4 +1,4 @@
-package com.example.listoffilmssequenia.data.ui;
+package com.example.listoffilmssequenia.data.ui.films.contract;
 
 import com.example.listoffilmssequenia.data.data.model.Film;
 
@@ -8,9 +8,9 @@ public interface OnListOfFilmsListener {
 
     void setListOfFilms(List<Film> films);
 
-    void setListOfGenres(List<String> genres2);
+    void setListOfGenres(List<String> uniqueGenres);
 
     void setError(Throwable t);
 
-    void setPressedGenreFilms(List<Film> filmsCurrentGenre);
+    void setPressedGenreFilms(List<Film> filmsBySelectedGenre);
 }

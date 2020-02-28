@@ -1,4 +1,4 @@
-package com.example.listoffilmssequenia.data.ui;
+package com.example.listoffilmssequenia.data.ui.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.listoffilmssequenia.R;
 import com.example.listoffilmssequenia.data.data.model.Genre;
+import com.example.listoffilmssequenia.data.ui.films.OnClickGenreListener;
 
 import java.util.ArrayList;
 import java.util.List;

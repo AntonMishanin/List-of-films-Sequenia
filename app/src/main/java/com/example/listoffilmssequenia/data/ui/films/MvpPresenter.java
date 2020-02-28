@@ -1,6 +1,9 @@
-package com.example.listoffilmssequenia.data.ui;
+package com.example.listoffilmssequenia.data.ui.films;
 
 import com.example.listoffilmssequenia.data.data.model.Film;
+import com.example.listoffilmssequenia.data.ui.films.contract.OnListOfFilmsListener;
+import com.example.listoffilmssequenia.data.ui.films.contract.Presenter;
+import com.example.listoffilmssequenia.data.ui.films.contract.View;
 
 import java.util.List;
 
@@ -25,8 +28,8 @@ public class MvpPresenter implements Presenter, OnListOfFilmsListener {
     }
 
     @Override
-    public void setPressedGenreFilms(List<Film> filmsCurrentGenre) {
-        view.setPressedGenreFilms(filmsCurrentGenre);
+    public void setPressedGenreFilms(List<Film> filmsBySelectedGenre) {
+        view.setPressedGenreFilms(filmsBySelectedGenre);
     }
 
     @Override
@@ -35,12 +38,17 @@ public class MvpPresenter implements Presenter, OnListOfFilmsListener {
     }
 
     @Override
-    public void setListOfGenres(List<String> genres2) {
-        view.setListOfGenres(genres2);
+    public void setListOfGenres(List<String> uniqueGenres) {
+        view.setListOfGenres(uniqueGenres);
     }
 
     @Override
     public void setError(Throwable t) {
         view.setError(t);
+    }
+
+    @Override
+    public void setView(View view) {
+        this.view = view;
     }
 }

@@ -1,17 +1,18 @@
 package com.example.listoffilmssequenia.data.data.model;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Film {
+public class Film implements Serializable {
 
-    int id;
-    String localized_name;
-    String name;
-    int year;
-    float rating;
-    String image_url;
-    String description;
-    List<String> genres;
+    private int id;
+    private String localized_name;
+    private String name;
+    private int year;
+    private float rating;
+    private String image_url;
+    private String description;
+    private List<String> genres;
 
     public int getId() {
         return id;
