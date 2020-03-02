@@ -1,5 +1,6 @@
 package com.example.listoffilmssequenia.data.ui.adapter;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,11 +18,12 @@ import java.util.List;
 
 public class GenresAdapter extends RecyclerView.Adapter<GenresAdapter.Holder> {
 
-    List<String> genres = new ArrayList<>();
-    OnClickGenreListener onClickGenreListener;
-    List<Boolean> genreChecked = new ArrayList<>();
+  //  List<String> genres = new ArrayList<>();
+    private OnClickGenreListener onClickGenreListener;
+    private int genrePositionSelected;
+   // List<Boolean> genreChecked = new ArrayList<>();
 
-    List<Genre> newGenres = new ArrayList<>();
+    private List<Genre> newGenres = new ArrayList<>();
 
     public GenresAdapter(OnClickGenreListener onClickGenreListener) {
         this.onClickGenreListener = onClickGenreListener;
@@ -45,11 +47,6 @@ public class GenresAdapter extends RecyclerView.Adapter<GenresAdapter.Holder> {
     }
 
     public void setGenres(List<String> genres) {
-        // genres.clear();
-        //  this.genres.addAll(genres);
-        // for (int i = 0; i < genres.size(); i++) {
-        //     genreChecked.add(false);
-        // }
         newGenres.clear();
         for (int i = 0; i < genres.size(); i++) {
             newGenres.add(new Genre(genres.get(i), false));
@@ -58,24 +55,31 @@ public class GenresAdapter extends RecyclerView.Adapter<GenresAdapter.Holder> {
         notifyDataSetChanged();
     }
 
+    public void setSelectedGenre(int genrePositionSelected, List<String> genres){
+        setGenres(genres);
+        newGenres.get(genrePositionSelected).setGenreChecked(true);
+        onClickGenreListener.onClickGenre(genrePositionSelected, true);
+        notifyDataSetChanged();
+    }
 
-    public class Holder extends RecyclerView.ViewHolder {
+
+    class Holder extends RecyclerView.ViewHolder {
 
         TextView genre;
 
-        public Holder(@NonNull View itemView) {
+        Holder(@NonNull View itemView) {
             super(itemView);
 
             genre = itemView.findViewById(R.id.genre);
         }
 
-        public void bind(final int position) {
+        void bind(final int position) {
             genre.setText(newGenres.get(position).getGenre());
 
             if (newGenres.get(position).isGenreChecked()) {
                 genre.setBackgroundResource(R.color.colorPrimary);
             } else {
-                genre.setBackgroundResource(R.color.colorWhite);
+                genre.setBackgroundResource(R.color.colorTransparent);
             }
 
             itemView.setOnClickListener(new View.OnClickListener() {
@@ -98,5 +102,6 @@ public class GenresAdapter extends RecyclerView.Adapter<GenresAdapter.Holder> {
             });
 
         }
+
     }
 }

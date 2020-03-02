@@ -1,6 +1,7 @@
 package com.example.listoffilmssequenia.data.ui.films;
 
 import com.example.listoffilmssequenia.data.data.model.Film;
+import com.example.listoffilmssequenia.data.data.prefs.PrefModel;
 import com.example.listoffilmssequenia.data.ui.films.contract.OnListOfFilmsListener;
 import com.example.listoffilmssequenia.data.ui.films.contract.Presenter;
 import com.example.listoffilmssequenia.data.ui.films.contract.View;
@@ -28,8 +29,18 @@ public class MvpPresenter implements Presenter, OnListOfFilmsListener {
     }
 
     @Override
-    public void setPressedGenreFilms(List<Film> filmsBySelectedGenre) {
-        view.setPressedGenreFilms(filmsBySelectedGenre);
+    public void setPressedGenreFilms(List<Film> filmsBySelectedGenre, int genrePositionSelected) {
+        view.setPressedGenreFilms(filmsBySelectedGenre, genrePositionSelected);
+    }
+
+    @Override
+    public void oStartDetailsFilmFragment(Film film) {
+        view.oStartDetailsFilmFragment(film);
+    }
+
+    @Override
+    public void loadSharedPreferences(PrefModel prefModel, List<String> uniqueGenres) {
+        view.loadSharedPreferences(prefModel, uniqueGenres);
     }
 
     @Override
@@ -47,8 +58,20 @@ public class MvpPresenter implements Presenter, OnListOfFilmsListener {
         view.setError(t);
     }
 
+    void setSharedPreferences(PrefModel prefModel) {
+        mvpInteractor.setSharedPreferences(prefModel);
+    }
+
+    void getSharedPreferences() {
+         mvpInteractor.getSharedPreferences(this);
+    }
+
+    public void onClickFilm(int position){
+        mvpInteractor.onClickFilm(position, this);
+    }
+
     @Override
     public void setView(View view) {
-        this.view = view;
+       // this.view = view;
     }
 }

@@ -1,5 +1,6 @@
 package com.example.listoffilmssequenia.data.ui.adapter;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ public class FilmsAdapter extends RecyclerView.Adapter<FilmsAdapter.Holder> {
 
     private List<Film> films = new ArrayList<>();
     private OnClickFilmListener onClickFilmListener;
+    private int genrePositionSelected;
 
     public FilmsAdapter(OnClickFilmListener onClickFilmListener) {
         this.onClickFilmListener = onClickFilmListener;
@@ -41,7 +43,17 @@ public class FilmsAdapter extends RecyclerView.Adapter<FilmsAdapter.Holder> {
     public void setFilms(List<Film> films) {
         this.films.clear();
         this.films.addAll(films);
+        Log.d("dd", films.size() + "adapter");
         notifyDataSetChanged();
+    }
+
+    public void setSelecedGenre(int genrePositionSelected){
+        this.genrePositionSelected = genrePositionSelected;
+        notifyDataSetChanged();
+    }
+
+    public void restorationDetailsFragment(int position){
+        onClickFilmListener.onClickFilm(position);
     }
 
     @Override

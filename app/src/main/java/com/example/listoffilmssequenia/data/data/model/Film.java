@@ -14,6 +14,15 @@ public class Film implements Serializable {
     private String description;
     private List<String> genres;
 
+    public Film(String localized_name, String name, int year, float rating, String image_url, String description) {
+        this.localized_name = localized_name;
+        this.name = name;
+        this.year = year;
+        this.rating = rating;
+        this.image_url = image_url;
+        this.description = description;
+    }
+
     public int getId() {
         return id;
     }

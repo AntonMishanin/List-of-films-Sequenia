@@ -2,6 +2,7 @@ package com.example.listoffilmssequenia.data.ui.films;
 
 
 import android.annotation.TargetApi;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -25,27 +26,38 @@ import com.example.listoffilmssequenia.R;
 import com.example.listoffilmssequenia.data.App;
 import com.example.listoffilmssequenia.data.data.model.Film;
 import com.example.listoffilmssequenia.data.data.network.Api;
+import com.example.listoffilmssequenia.data.data.prefs.PrefModel;
+import com.example.listoffilmssequenia.data.data.prefs.PreferencesHelper;
 import com.example.listoffilmssequenia.data.di.component.AppComponent;
 import com.example.listoffilmssequenia.data.di.component.DaggerFilmsComponent;
 import com.example.listoffilmssequenia.data.di.module.FilmsModule;
-import com.example.listoffilmssequenia.data.ui.details.DetailsFragment;
+import com.example.listoffilmssequenia.data.ui.details.DetailsFilmFragment;
 import com.example.listoffilmssequenia.data.ui.adapter.FilmsAdapter;
 import com.example.listoffilmssequenia.data.ui.adapter.GenresAdapter;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import javax.inject.Inject;
 
+import static android.content.Context.MODE_PRIVATE;
 
-public class ListFragment extends Fragment implements OnClickFilmListener, OnClickGenreListener, com.example.listoffilmssequenia.data.ui.films.contract.View {
 
-    private static final String TAG = "ListFragment";
+public class ListFilmsFragment extends Fragment implements OnClickFilmListener, OnClickGenreListener,
+        com.example.listoffilmssequenia.data.ui.films.contract.View {
+
+    private static final String TAG = "ListFilmsFragment";
     private static final String TOOLBAR_TITLE_FILMS = "Фильмы";
+    public static final String BUNDLE_KEY_CLICKED_FILM = "BUNDLE_KEY_CLICKED_FILM";
+    public static final int DEFAULT_GENRE_NOT_SELECTED = -1;
 
-    private List<Film> allFilms = new ArrayList<>();
+    private int genrePositionSelected = DEFAULT_GENRE_NOT_SELECTED;
+    private boolean detailsFilmFragmentStart = false;
+    private SharedPreferences sharedPreferences;
     private View view;
+   // FragmentManager fragmentManager;
+    private Film film = new Film("", "", 1, 1, "", "");
+    private int positionClickedFilm = -1;
 
     @Inject
     FilmsAdapter filmsAdapter;
@@ -55,8 +67,10 @@ public class ListFragment extends Fragment implements OnClickFilmListener, OnCli
     MvpPresenter mvpPresenter;
     @Inject
     Api api;
+    @Inject
+    PreferencesHelper preferencesHelper;
 
-    public ListFragment() {
+    public ListFilmsFragment() {
     }
 
     @Override
@@ -64,19 +78,24 @@ public class ListFragment extends Fragment implements OnClickFilmListener, OnCli
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_list, container, false);
 
+        Log.d("dd", "onStart: "+genrePositionSelected);
+
+      /*  sharedPreferences = getActivity().getPreferences(MODE_PRIVATE);
+
         iniDagger();
         initRecyclerView();
         initToolbar();
 
         mvpPresenter.getListOfFilms();
-
+        //getSharedPreferences();
+*/
         return view;
     }
 
     private void iniDagger() {
         DaggerFilmsComponent.builder()
                 .appComponent(getAppComponent())
-                .filmsModule(new FilmsModule(this, this, this))
+                .filmsModule(new FilmsModule(this, this, this, sharedPreferences))
                 .build()
                 .inject(this);
     }
@@ -86,7 +105,7 @@ public class ListFragment extends Fragment implements OnClickFilmListener, OnCli
         return ((App) Objects.requireNonNull(getActivity()).getApplication()).getAppComponent();
     }
 
-    private void initToolbar(){
+    private void initToolbar() {
         Toolbar toolbar = getActivity().findViewById(R.id.toolbar_fragment_details);
         TextView textView = toolbar.findViewById(R.id.toolbar_title);
         textView.setText(TOOLBAR_TITLE_FILMS);
@@ -104,37 +123,46 @@ public class ListFragment extends Fragment implements OnClickFilmListener, OnCli
         recyclerViewGenre.setAdapter(genresAdapter);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onClickFilm(int position) {
-        DetailsFragment detailsFragment = new DetailsFragment();
+        mvpPresenter.onClickFilm(position);
+        positionClickedFilm = position;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @Override
+    public void oStartDetailsFilmFragment(Film film) {
+        DetailsFilmFragment detailsFilmFragment = new DetailsFilmFragment();
+
         Bundle bundle = new Bundle();
-        bundle.putSerializable("Clicked film", allFilms.get(position));
-        detailsFragment.setArguments(bundle);
+        bundle.putSerializable(BUNDLE_KEY_CLICKED_FILM, film);
+        detailsFilmFragment.setArguments(bundle);
 
         FragmentManager fragmentManager = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.frame_layout_container, detailsFragment);
+        fragmentTransaction.replace(R.id.frame_layout_container, detailsFilmFragment);
         fragmentTransaction.addToBackStack(null).commit();
+
+        detailsFilmFragmentStart = true;
+        setSharedPreferences(film);
     }
 
     @Override
     public void onClickGenre(int position, boolean isGenreChecked) {
         mvpPresenter.onClickGenre(position, isGenreChecked);
+        genrePositionSelected = position;
     }
 
     @Override
-    public void setPressedGenreFilms(List<Film> filmsBySelectedGenre) {
+    public void setPressedGenreFilms(List<Film> filmsBySelectedGenre, int genrePositionSelected) {
+        this.genrePositionSelected = genrePositionSelected;
         filmsAdapter.setFilms(filmsBySelectedGenre);
-        allFilms.clear();
-        allFilms.addAll(filmsBySelectedGenre);
     }
 
     @Override
     public void setListOfFilms(List<Film> films) {
         filmsAdapter.setFilms(films);
-        allFilms.clear();
-        allFilms.addAll(films);
+        getSharedPreferences();
     }
 
     @Override
@@ -147,9 +175,47 @@ public class ListFragment extends Fragment implements OnClickFilmListener, OnCli
         Log.d(TAG, "onFailure: " + t.getMessage());
     }
 
+    private void setSharedPreferences(Film film) {
+        PrefModel prefModel = new PrefModel(genrePositionSelected, detailsFilmFragmentStart, film, positionClickedFilm);
+        mvpPresenter.setSharedPreferences(prefModel);
+    }
+
+    private void getSharedPreferences() {
+        mvpPresenter.getSharedPreferences();
+    }
+
+    @Override
+    public void loadSharedPreferences(PrefModel prefModel, List<String> uniqueGenres) {
+        genrePositionSelected = prefModel.getGenrePositionSelected();
+        detailsFilmFragmentStart = prefModel.getDetailsFilmFragmentStart();
+        Log.d("dd", "load shered" + genrePositionSelected);
+        if (genrePositionSelected != DEFAULT_GENRE_NOT_SELECTED && uniqueGenres.size() != 0) {
+            genresAdapter.setSelectedGenre(genrePositionSelected, uniqueGenres);
+        }
+
+        if (prefModel.getPositionClickedFilm() != -1){
+            filmsAdapter.restorationDetailsFragment(prefModel.getPositionClickedFilm());
+        }
+
+
+            if (detailsFilmFragmentStart) {
+                //  DetailsFilmFragment detailsFilmFragment = new DetailsFilmFragment();
+
+                // Bundle bundle = new Bundle();
+                // bundle.putSerializable(BUNDLE_KEY_CLICKED_FILM, prefModel.getFilm());
+                // detailsFilmFragment.setArguments(bundle);
+
+                // fragmentManager = getActivity().getSupportFragmentManager();
+                //  FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                //  fragmentTransaction.replace(R.id.frame_layout_container, detailsFilmFragment);
+                //  fragmentTransaction.commit();
+            }
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mvpPresenter.setView(null);
+      //  setSharedPreferences(film);
+        Log.d("dd", "onDestroy: "+genrePositionSelected);
     }
 }

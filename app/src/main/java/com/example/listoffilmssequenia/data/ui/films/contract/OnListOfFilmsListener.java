@@ -1,6 +1,7 @@
 package com.example.listoffilmssequenia.data.ui.films.contract;
 
 import com.example.listoffilmssequenia.data.data.model.Film;
+import com.example.listoffilmssequenia.data.data.prefs.PrefModel;
 
 import java.util.List;
 
@@ -12,5 +13,9 @@ public interface OnListOfFilmsListener {
 
     void setError(Throwable t);
 
-    void setPressedGenreFilms(List<Film> filmsBySelectedGenre);
+    void setPressedGenreFilms(List<Film> filmsBySelectedGenre, int genrePositionSelected);
+
+    void oStartDetailsFilmFragment(Film film);
+
+   void loadSharedPreferences(PrefModel prefModel, List<String> uniqueGenres);
 }

@@ -1,6 +1,9 @@
 package com.example.listoffilmssequenia.data.di.module;
 
+import android.content.SharedPreferences;
+
 import com.example.listoffilmssequenia.data.data.network.Api;
+import com.example.listoffilmssequenia.data.data.prefs.PreferencesHelper;
 import com.example.listoffilmssequenia.data.di.PerActivity;
 import com.example.listoffilmssequenia.data.ui.adapter.FilmsAdapter;
 import com.example.listoffilmssequenia.data.ui.adapter.GenresAdapter;
@@ -20,11 +23,20 @@ public class FilmsModule {
     private View view;
     private OnClickFilmListener onClickFilmListener;
     private OnClickGenreListener onClickGenreListener;
+    private SharedPreferences sharedPreferences;
 
-    public FilmsModule(View view, OnClickFilmListener onClickFilmListener, OnClickGenreListener onClickGenreListener) {
+    public FilmsModule(View view, OnClickFilmListener onClickFilmListener,
+                       OnClickGenreListener onClickGenreListener, SharedPreferences sharedPreferences) {
         this.view = view;
         this.onClickFilmListener = onClickFilmListener;
         this.onClickGenreListener = onClickGenreListener;
+        this.sharedPreferences = sharedPreferences;
+    }
+
+    @PerActivity
+    @Provides
+    PreferencesHelper providePreferencesHelper() {
+        return new PreferencesHelper(sharedPreferences);
     }
 
     @PerActivity
@@ -35,10 +47,11 @@ public class FilmsModule {
 
     @PerActivity
     @Provides
-    MvpInteractor provideMvpInteractor(Api api) {
-        return new MvpInteractor(api);
+    MvpInteractor provideMvpInteractor(Api api, PreferencesHelper preferencesHelper) {
+        return new MvpInteractor(api, preferencesHelper);
     }
 
+    @PerActivity
     @Provides
     MvpPresenter provideMvpPresenter(MvpInteractor mvpInteractor) {
         return new MvpPresenter(view, mvpInteractor);

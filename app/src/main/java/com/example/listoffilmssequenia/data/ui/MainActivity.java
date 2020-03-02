@@ -6,20 +6,24 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import com.example.listoffilmssequenia.R;
-import com.example.listoffilmssequenia.data.ui.films.ListFragment;
+import com.example.listoffilmssequenia.data.ui.films.ListFilmsFragment;
 
 public class MainActivity extends AppCompatActivity {
 
     FragmentManager fragmentManager;
     FragmentTransaction fragmentTransaction;
+    ListFilmsFragment listFilmsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Log.d("dd", "onCreate: MA");
 
         initToolbar();
         startFragment();
@@ -32,13 +36,24 @@ public class MainActivity extends AppCompatActivity {
 
     private void startFragment(){
         fragmentManager = getSupportFragmentManager();
-        fragmentTransaction = fragmentManager.beginTransaction();
-        ListFragment listFragment = new ListFragment();
-        fragmentTransaction.replace(R.id.frame_layout_container, listFragment);
-        fragmentTransaction.commit();
+        listFilmsFragment = (ListFilmsFragment) fragmentManager.findFragmentByTag("ListFilmsFragment");
+
+        if(listFilmsFragment == null) {
+          //  fragmentManager = getSupportFragmentManager();
+            fragmentTransaction = fragmentManager.beginTransaction();
+            listFilmsFragment = new ListFilmsFragment();
+            fragmentTransaction.replace(R.id.frame_layout_container, listFilmsFragment);
+            fragmentTransaction.commit();
+        }
     }
 
     public void onBackPressedFromDetailFragment(View view) {
         onBackPressed();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("dd", "onDestroy: MA ");
     }
 }

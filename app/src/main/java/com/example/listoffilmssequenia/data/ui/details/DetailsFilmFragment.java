@@ -19,7 +19,9 @@ import com.example.listoffilmssequenia.R;
 import com.example.listoffilmssequenia.data.data.model.Film;
 import com.squareup.picasso.Picasso;
 
-public class DetailsFragment extends Fragment {
+import static com.example.listoffilmssequenia.data.ui.films.ListFilmsFragment.BUNDLE_KEY_CLICKED_FILM;
+
+public class DetailsFilmFragment extends Fragment {
 
     private Film film;
     private View view;
@@ -32,7 +34,7 @@ public class DetailsFragment extends Fragment {
 
     private ImageButton toolbarImageButtonBack;
 
-    public DetailsFragment() {
+    public DetailsFilmFragment() {
     }
 
     @Override
@@ -51,7 +53,7 @@ public class DetailsFragment extends Fragment {
     private void getBundle() {
         Bundle bundle = getArguments();
         if (bundle != null)
-            film = (Film) bundle.getSerializable("Clicked film");
+            film = (Film) bundle.getSerializable(BUNDLE_KEY_CLICKED_FILM);
     }
 
     private void initView() {
@@ -67,11 +69,12 @@ public class DetailsFragment extends Fragment {
         toolbarImageButtonBack = toolbar.findViewById(R.id.toolbar_image_button_back);
         toolbarImageButtonBack.setVisibility(View.VISIBLE);
         TextView toolbarTitle = toolbar.findViewById(R.id.toolbar_title);
-        toolbarTitle.setText(film.getName());
+        //toolbarTitle.setText(film.getName());
     }
 
     @SuppressLint("SetTextI18n")
     private void setDataIntoView() {
+        /*
         textName.setText(film.getName());
         textYears.setText(Integer.toString(film.getYear()));
         textRating.setText(Float.toString(film.getRating()));
@@ -82,6 +85,7 @@ public class DetailsFragment extends Fragment {
                 .placeholder(R.mipmap.ic_launcherq)
                 .error(R.mipmap.ic_launcherq)
                 .into(imageView);
+                */
     }
 
     @Override
