@@ -70,6 +70,10 @@ public class MvpPresenter implements Presenter, OnListOfFilmsListener {
         mvpInteractor.onClickFilm(position, this);
     }
 
+    public void setPosition(int position){
+        mvpInteractor.setPosition(position);
+    }
+
     @Override
     public void setView(View view) {
        // this.view = view;

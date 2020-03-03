@@ -6,4 +6,6 @@
     <string name="image_arrow_for_fragment_details">Image - arrow for Fragment details</string>
     <string name="Genres">Жанры</string>
     <string name="Films">Фильмы</string>
+    <string name="Year">Год:</string>
+    <string name="film_image_url">film_image_url</string>
 </resources>

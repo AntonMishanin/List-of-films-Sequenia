@@ -1,6 +1,7 @@
 package com.example.listoffilmssequenia.data.data.prefs;
 
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.example.listoffilmssequenia.data.data.model.Film;
 
@@ -31,6 +32,13 @@ public class PreferencesHelper {
 
         editor.putInt("7", prefModel.getPositionClickedFilm());
         editor.apply();
+    }
+
+    public void setPosition(int position){
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("7", position);
+        editor.apply();
+        Log.d("dd", "setPosition: " + position);
     }
 
     public PrefModel getSharedPreferences() {

@@ -1,6 +1,5 @@
 package com.example.listoffilmssequenia.data.ui.adapter;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,10 +17,7 @@ import java.util.List;
 
 public class GenresAdapter extends RecyclerView.Adapter<GenresAdapter.Holder> {
 
-  //  List<String> genres = new ArrayList<>();
     private OnClickGenreListener onClickGenreListener;
-    private int genrePositionSelected;
-   // List<Boolean> genreChecked = new ArrayList<>();
 
     private List<Genre> newGenres = new ArrayList<>();
 

@@ -31,6 +31,7 @@ import com.example.listoffilmssequenia.data.data.prefs.PreferencesHelper;
 import com.example.listoffilmssequenia.data.di.component.AppComponent;
 import com.example.listoffilmssequenia.data.di.component.DaggerFilmsComponent;
 import com.example.listoffilmssequenia.data.di.module.FilmsModule;
+import com.example.listoffilmssequenia.data.ui.OnBackClickListener;
 import com.example.listoffilmssequenia.data.ui.details.DetailsFilmFragment;
 import com.example.listoffilmssequenia.data.ui.adapter.FilmsAdapter;
 import com.example.listoffilmssequenia.data.ui.adapter.GenresAdapter;
@@ -55,9 +56,10 @@ public class ListFilmsFragment extends Fragment implements OnClickFilmListener, 
     private boolean detailsFilmFragmentStart = false;
     private SharedPreferences sharedPreferences;
     private View view;
-   // FragmentManager fragmentManager;
+    // FragmentManager fragmentManager;
     private Film film = new Film("", "", 1, 1, "", "");
     private int positionClickedFilm = -1;
+    OnBackClickListener onBackClickListener;
 
     @Inject
     FilmsAdapter filmsAdapter;
@@ -76,20 +78,28 @@ public class ListFilmsFragment extends Fragment implements OnClickFilmListener, 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_list, container, false);
+        view = inflater.inflate(R.layout.fragment_list_of_films, container, false);
 
-        Log.d("dd", "onStart: "+genrePositionSelected);
+        Log.d("dd", "onStart: " + positionClickedFilm);
 
-      /*  sharedPreferences = getActivity().getPreferences(MODE_PRIVATE);
+        sharedPreferences = getActivity().getPreferences(MODE_PRIVATE);
 
         iniDagger();
         initRecyclerView();
         initToolbar();
 
         mvpPresenter.getListOfFilms();
-        //getSharedPreferences();
-*/
+
         return view;
+    }
+
+    public void setListener(OnBackClickListener onBackClickListener){
+        this.onBackClickListener = onBackClickListener;
+    }
+
+    public void setPosition(){
+        mvpPresenter.setPosition(-1);
+        positionClickedFilm = -1;
     }
 
     private void iniDagger() {
@@ -127,30 +137,47 @@ public class ListFilmsFragment extends Fragment implements OnClickFilmListener, 
     public void onClickFilm(int position) {
         mvpPresenter.onClickFilm(position);
         positionClickedFilm = position;
+        setSharedPreferences(film);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void oStartDetailsFilmFragment(Film film) {
-        DetailsFilmFragment detailsFilmFragment = new DetailsFilmFragment();
-
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(BUNDLE_KEY_CLICKED_FILM, film);
-        detailsFilmFragment.setArguments(bundle);
 
         FragmentManager fragmentManager = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.frame_layout_container, detailsFilmFragment);
-        fragmentTransaction.addToBackStack(null).commit();
 
-        detailsFilmFragmentStart = true;
-        setSharedPreferences(film);
+
+        DetailsFilmFragment detailsFilmFragment = (DetailsFilmFragment) fragmentManager.findFragmentByTag("DetailsFilmFragment");
+
+        if(detailsFilmFragment != null) {
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(BUNDLE_KEY_CLICKED_FILM, film);
+            detailsFilmFragment.setArguments(bundle);
+
+        }else{
+            detailsFilmFragment = new DetailsFilmFragment();
+
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(BUNDLE_KEY_CLICKED_FILM, film);
+            detailsFilmFragment.setArguments(bundle);
+
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.frame_layout_container, detailsFilmFragment, "DetailsFilmFragment");
+            fragmentTransaction.addToBackStack(null).commit();
+        }
+
+        detailsFilmFragment.setListener(onBackClickListener);
+
     }
 
     @Override
     public void onClickGenre(int position, boolean isGenreChecked) {
         mvpPresenter.onClickGenre(position, isGenreChecked);
-        genrePositionSelected = position;
+        if(isGenreChecked) {
+            genrePositionSelected = position;
+        }else{
+            genrePositionSelected = DEFAULT_GENRE_NOT_SELECTED;
+        }
     }
 
     @Override
@@ -162,7 +189,7 @@ public class ListFilmsFragment extends Fragment implements OnClickFilmListener, 
     @Override
     public void setListOfFilms(List<Film> films) {
         filmsAdapter.setFilms(films);
-        getSharedPreferences();
+        //getSharedPreferences();
     }
 
     @Override
@@ -177,7 +204,9 @@ public class ListFilmsFragment extends Fragment implements OnClickFilmListener, 
 
     private void setSharedPreferences(Film film) {
         PrefModel prefModel = new PrefModel(genrePositionSelected, detailsFilmFragmentStart, film, positionClickedFilm);
-        mvpPresenter.setSharedPreferences(prefModel);
+        if(mvpPresenter != null) {
+            mvpPresenter.setSharedPreferences(prefModel);
+        }
     }
 
     private void getSharedPreferences() {
@@ -187,35 +216,20 @@ public class ListFilmsFragment extends Fragment implements OnClickFilmListener, 
     @Override
     public void loadSharedPreferences(PrefModel prefModel, List<String> uniqueGenres) {
         genrePositionSelected = prefModel.getGenrePositionSelected();
-        detailsFilmFragmentStart = prefModel.getDetailsFilmFragmentStart();
-        Log.d("dd", "load shered" + genrePositionSelected);
+        Log.d("dd", "load shered " + prefModel.getPositionClickedFilm());
         if (genrePositionSelected != DEFAULT_GENRE_NOT_SELECTED && uniqueGenres.size() != 0) {
             genresAdapter.setSelectedGenre(genrePositionSelected, uniqueGenres);
         }
 
-        if (prefModel.getPositionClickedFilm() != -1){
+        if (prefModel.getPositionClickedFilm() != -1) {
             filmsAdapter.restorationDetailsFragment(prefModel.getPositionClickedFilm());
         }
-
-
-            if (detailsFilmFragmentStart) {
-                //  DetailsFilmFragment detailsFilmFragment = new DetailsFilmFragment();
-
-                // Bundle bundle = new Bundle();
-                // bundle.putSerializable(BUNDLE_KEY_CLICKED_FILM, prefModel.getFilm());
-                // detailsFilmFragment.setArguments(bundle);
-
-                // fragmentManager = getActivity().getSupportFragmentManager();
-                //  FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                //  fragmentTransaction.replace(R.id.frame_layout_container, detailsFilmFragment);
-                //  fragmentTransaction.commit();
-            }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-      //  setSharedPreferences(film);
-        Log.d("dd", "onDestroy: "+genrePositionSelected);
+        setSharedPreferences(film);
+        Log.d("dd", "onDestroy: " + positionClickedFilm);
     }
 }

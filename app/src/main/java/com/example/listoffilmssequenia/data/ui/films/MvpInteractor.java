@@ -14,6 +14,9 @@ import com.example.listoffilmssequenia.data.ui.films.contract.Interactor;
 import com.example.listoffilmssequenia.data.ui.films.contract.OnListOfFilmsListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import retrofit2.Call;
@@ -65,6 +68,8 @@ public class MvpInteractor implements Interactor {
     public void onClickGenre(int position, boolean isGenreChecked, OnListOfFilmsListener onListOfFilmsListener) {
         if (!isGenreChecked) {
             onListOfFilmsListener.setPressedGenreFilms(films, DEFAULT_GENRE_NOT_SELECTED);
+            filmsBySelectedGenre.clear();
+            filmsBySelectedGenre.addAll(films);
         } else {
             filmsBySelectedGenre = new ArrayList<>();
             for (int i = 0; i < films.size(); i++) {
@@ -92,6 +97,10 @@ public class MvpInteractor implements Interactor {
         onListOfFilmsListener.loadSharedPreferences(preferencesHelper.getSharedPreferences(), uniqueGenres);
     }
 
+    public void setPosition(int position){
+        preferencesHelper.setPosition(position);
+    }
+
     @SuppressLint("StaticFieldLeak")
     class DownloadListOfFilms extends AsyncTask<Void, Void, Void> {
 
@@ -101,6 +110,7 @@ public class MvpInteractor implements Interactor {
             this.onListOfFilmsListener = onListOfFilmsListener;
         }
 
+
         @Override
         protected Void doInBackground(Void... voids) {
 
@@ -109,11 +119,13 @@ public class MvpInteractor implements Interactor {
                 public void onResponse(@NonNull Call<ResponseFilms> call, @NonNull Response<ResponseFilms> response) {
                     if (response.body() != null) {
                         films.addAll(response.body().getFilms());
-                        filmsBySelectedGenre.addAll(films);
-                       // onListOfFilmsListener.setListOfFilms(films);
-                        //onListOfFilmsListener.setListOfGenres(getListUniqueGenres(films));
+                        Collections.sort(films);
 
-                       // onListOfFilmsListener.loadSharedPreferences(preferencesHelper.getSharedPreferences(), uniqueGenres);
+                        filmsBySelectedGenre.addAll(films);
+                        onListOfFilmsListener.setListOfFilms(films);
+                        onListOfFilmsListener.setListOfGenres(getListUniqueGenres(films));
+
+                        onListOfFilmsListener.loadSharedPreferences(preferencesHelper.getSharedPreferences(), uniqueGenres);
                     }
                 }
 

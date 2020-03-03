@@ -12,7 +12,7 @@ import android.view.View;
 import com.example.listoffilmssequenia.R;
 import com.example.listoffilmssequenia.data.ui.films.ListFilmsFragment;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnBackClickListener {
 
     FragmentManager fragmentManager;
     FragmentTransaction fragmentTransaction;
@@ -29,26 +29,39 @@ public class MainActivity extends AppCompatActivity {
         startFragment();
     }
 
-    private void initToolbar(){
+    private void initToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar_fragment_details);
         setSupportActionBar(toolbar);
     }
 
-    private void startFragment(){
+    private void startFragment() {
         fragmentManager = getSupportFragmentManager();
         listFilmsFragment = (ListFilmsFragment) fragmentManager.findFragmentByTag("ListFilmsFragment");
 
-        if(listFilmsFragment == null) {
-          //  fragmentManager = getSupportFragmentManager();
+        if (listFilmsFragment == null) {
             fragmentTransaction = fragmentManager.beginTransaction();
             listFilmsFragment = new ListFilmsFragment();
-            fragmentTransaction.replace(R.id.frame_layout_container, listFilmsFragment);
+            fragmentTransaction.replace(R.id.frame_layout_container, listFilmsFragment, "ListFilmsFragment");
             fragmentTransaction.commit();
         }
+        listFilmsFragment.setListener(this);
     }
 
     public void onBackPressedFromDetailFragment(View view) {
         onBackPressed();
+
+        listFilmsFragment = (ListFilmsFragment) fragmentManager.findFragmentByTag("ListFilmsFragment");
+        if (listFilmsFragment != null) {
+            listFilmsFragment.setPosition();
+        }
+    }
+
+    @Override
+    public void onBackClick() {
+        listFilmsFragment = (ListFilmsFragment) fragmentManager.findFragmentByTag("ListFilmsFragment");
+        if (listFilmsFragment != null) {
+            listFilmsFragment.setPosition();
+        }
     }
 
     @Override

@@ -3,7 +3,7 @@ package com.example.listoffilmssequenia.data.data.model;
 import java.io.Serializable;
 import java.util.List;
 
-public class Film implements Serializable {
+public class Film implements Serializable, Comparable<Film> {
 
     private int id;
     private String localized_name;
@@ -53,5 +53,10 @@ public class Film implements Serializable {
 
     public List<String> getGenres() {
         return genres;
+    }
+
+    @Override
+    public int compareTo(Film film) {
+        return getLocalized_name().compareTo(film.getLocalized_name());
     }
 }

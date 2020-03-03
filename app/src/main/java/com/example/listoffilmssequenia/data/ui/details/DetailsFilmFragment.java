@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.example.listoffilmssequenia.R;
 import com.example.listoffilmssequenia.data.data.model.Film;
+import com.example.listoffilmssequenia.data.ui.OnBackClickListener;
 import com.squareup.picasso.Picasso;
 
 import static com.example.listoffilmssequenia.data.ui.films.ListFilmsFragment.BUNDLE_KEY_CLICKED_FILM;
@@ -32,6 +33,8 @@ public class DetailsFilmFragment extends Fragment {
     private TextView textDescription;
     private ImageView imageView;
 
+    OnBackClickListener onBackClickListener;
+
     private ImageButton toolbarImageButtonBack;
 
     public DetailsFilmFragment() {
@@ -40,7 +43,7 @@ public class DetailsFilmFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_details, container, false);
+        view = inflater.inflate(R.layout.fragment_details_film, container, false);
 
         getBundle();
         initView();
@@ -64,18 +67,18 @@ public class DetailsFilmFragment extends Fragment {
         imageView = view.findViewById(R.id.film_image);
     }
 
-    private void initToolbar(){
+    private void initToolbar() {
         Toolbar toolbar = getActivity().findViewById(R.id.toolbar_fragment_details);
         toolbarImageButtonBack = toolbar.findViewById(R.id.toolbar_image_button_back);
         toolbarImageButtonBack.setVisibility(View.VISIBLE);
         TextView toolbarTitle = toolbar.findViewById(R.id.toolbar_title);
-        //toolbarTitle.setText(film.getName());
+        toolbarTitle.setText(film.getName());
     }
 
     @SuppressLint("SetTextI18n")
     private void setDataIntoView() {
-        /*
-        textName.setText(film.getName());
+
+        textName.setText(film.getLocalized_name());
         textYears.setText(Integer.toString(film.getYear()));
         textRating.setText(Float.toString(film.getRating()));
         textDescription.setText(film.getDescription());
@@ -85,12 +88,18 @@ public class DetailsFilmFragment extends Fragment {
                 .placeholder(R.mipmap.ic_launcherq)
                 .error(R.mipmap.ic_launcherq)
                 .into(imageView);
-                */
+    }
+
+    public void setListener(OnBackClickListener onBackClickListener) {
+        this.onBackClickListener = onBackClickListener;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         toolbarImageButtonBack.setVisibility(View.GONE);
+        if (onBackClickListener != null) {
+            onBackClickListener.onBackClick();
+        }
     }
 }

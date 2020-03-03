@@ -1,6 +1,5 @@
 package com.example.listoffilmssequenia.data.ui.adapter;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +21,6 @@ public class FilmsAdapter extends RecyclerView.Adapter<FilmsAdapter.Holder> {
 
     private List<Film> films = new ArrayList<>();
     private OnClickFilmListener onClickFilmListener;
-    private int genrePositionSelected;
 
     public FilmsAdapter(OnClickFilmListener onClickFilmListener) {
         this.onClickFilmListener = onClickFilmListener;
@@ -43,12 +41,6 @@ public class FilmsAdapter extends RecyclerView.Adapter<FilmsAdapter.Holder> {
     public void setFilms(List<Film> films) {
         this.films.clear();
         this.films.addAll(films);
-        Log.d("dd", films.size() + "adapter");
-        notifyDataSetChanged();
-    }
-
-    public void setSelecedGenre(int genrePositionSelected){
-        this.genrePositionSelected = genrePositionSelected;
         notifyDataSetChanged();
     }
 
@@ -75,12 +67,12 @@ public class FilmsAdapter extends RecyclerView.Adapter<FilmsAdapter.Holder> {
 
         void bind(final int position) {
 
-            filmsName.setText(films.get(position).getName());
+            filmsName.setText(films.get(position).getLocalized_name());
 
             Picasso.with(itemView.getContext())
                     .load(films.get(position).getImage_url())
-                    .placeholder(R.mipmap.ic_launcherq)
-                    .error(R.mipmap.ic_launcherq)
+                    .placeholder(R.mipmap.ic_launcher)
+                    .error(R.mipmap.ic_launcher)
                     .into(filmsImage);
 
             itemView.setOnClickListener(new View.OnClickListener() {
