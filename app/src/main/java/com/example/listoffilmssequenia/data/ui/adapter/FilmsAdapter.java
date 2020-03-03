@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.listoffilmssequenia.R;
 import com.example.listoffilmssequenia.data.data.model.Film;
-import com.example.listoffilmssequenia.data.ui.films.OnClickFilmListener;
+import com.example.listoffilmssequenia.data.ui.mainactivity.OnClickFilmListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;

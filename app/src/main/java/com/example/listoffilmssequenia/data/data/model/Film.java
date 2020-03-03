@@ -5,7 +5,6 @@ import java.util.List;
 
 public class Film implements Serializable, Comparable<Film> {
 
-    private int id;
     private String localized_name;
     private String name;
     private int year;
@@ -21,10 +20,6 @@ public class Film implements Serializable, Comparable<Film> {
         this.rating = rating;
         this.image_url = image_url;
         this.description = description;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public String getLocalized_name() {

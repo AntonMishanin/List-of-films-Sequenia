@@ -1,4 +1,4 @@
-package com.example.listoffilmssequenia.data.ui.films;
+package com.example.listoffilmssequenia.data.ui.mainactivity;
 
 import android.annotation.SuppressLint;
 import android.os.AsyncTask;
@@ -10,20 +10,19 @@ import com.example.listoffilmssequenia.data.data.model.ResponseFilms;
 import com.example.listoffilmssequenia.data.data.network.Api;
 import com.example.listoffilmssequenia.data.data.prefs.PrefModel;
 import com.example.listoffilmssequenia.data.data.prefs.PreferencesHelper;
-import com.example.listoffilmssequenia.data.ui.films.contract.Interactor;
-import com.example.listoffilmssequenia.data.ui.films.contract.OnListOfFilmsListener;
+import com.example.listoffilmssequenia.data.ui.mainactivity.contract.Interactor;
+import com.example.listoffilmssequenia.data.ui.mainactivity.contract.OnListOfFilmsListener;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static com.example.listoffilmssequenia.data.ui.films.ListFilmsFragment.DEFAULT_GENRE_NOT_SELECTED;
+import static com.example.listoffilmssequenia.data.ui.mainactivity.MainActivity.DEFAULT_FILM_NOT_SELECTED_BY_POSITION;
+import static com.example.listoffilmssequenia.data.ui.mainactivity.MainActivity.DEFAULT_GENRE_NOT_SELECTED;
 
 public class MvpInteractor implements Interactor {
 
@@ -32,6 +31,9 @@ public class MvpInteractor implements Interactor {
     private List<Film> filmsBySelectedGenre = new ArrayList<>();
     private List<String> uniqueGenres = new ArrayList<>();
     private Api api;
+    private int positionClickedFilm = DEFAULT_FILM_NOT_SELECTED_BY_POSITION;
+
+    private int genrePositionSelected = DEFAULT_GENRE_NOT_SELECTED;
 
     public MvpInteractor(Api api, PreferencesHelper preferencesHelper) {
         this.api = api;
@@ -67,10 +69,12 @@ public class MvpInteractor implements Interactor {
     @Override
     public void onClickGenre(int position, boolean isGenreChecked, OnListOfFilmsListener onListOfFilmsListener) {
         if (!isGenreChecked) {
+            genrePositionSelected = DEFAULT_GENRE_NOT_SELECTED;
             onListOfFilmsListener.setPressedGenreFilms(films, DEFAULT_GENRE_NOT_SELECTED);
             filmsBySelectedGenre.clear();
             filmsBySelectedGenre.addAll(films);
         } else {
+            genrePositionSelected = position;
             filmsBySelectedGenre = new ArrayList<>();
             for (int i = 0; i < films.size(); i++) {
                 for (int j = 0; j < films.get(i).getGenres().size(); j++) {
@@ -83,22 +87,21 @@ public class MvpInteractor implements Interactor {
         }
     }
 
-    public void onClickFilm(int position, OnListOfFilmsListener onListOfFilmsListener) {
-        if(filmsBySelectedGenre.size() != 0) {
+    void onClickFilm(int position, OnListOfFilmsListener onListOfFilmsListener) {
+        if (filmsBySelectedGenre.size() != 0) {
             onListOfFilmsListener.oStartDetailsFilmFragment(filmsBySelectedGenre.get(position));
+            positionClickedFilm = position;
         }
     }
 
-    void setSharedPreferences(PrefModel prefModel) {
+    void setSharedPreferences() {
+        PrefModel prefModel = new PrefModel(genrePositionSelected, positionClickedFilm);
         preferencesHelper.setSharedPreferences(prefModel);
     }
 
-    void getSharedPreferences(OnListOfFilmsListener onListOfFilmsListener) {
-        onListOfFilmsListener.loadSharedPreferences(preferencesHelper.getSharedPreferences(), uniqueGenres);
-    }
-
-    public void setPosition(int position){
+    void setUncheckedFilmPosition(int position) {
         preferencesHelper.setPosition(position);
+        positionClickedFilm = DEFAULT_FILM_NOT_SELECTED_BY_POSITION;
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -109,7 +112,6 @@ public class MvpInteractor implements Interactor {
         DownloadListOfFilms(OnListOfFilmsListener onListOfFilmsListener) {
             this.onListOfFilmsListener = onListOfFilmsListener;
         }
-
 
         @Override
         protected Void doInBackground(Void... voids) {

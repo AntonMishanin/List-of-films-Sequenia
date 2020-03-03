@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.listoffilmssequenia.R;
 import com.example.listoffilmssequenia.data.data.model.Genre;
-import com.example.listoffilmssequenia.data.ui.films.OnClickGenreListener;
+import com.example.listoffilmssequenia.data.ui.mainactivity.OnClickGenreListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,6 @@ import java.util.List;
 public class GenresAdapter extends RecyclerView.Adapter<GenresAdapter.Holder> {
 
     private OnClickGenreListener onClickGenreListener;
-
     private List<Genre> newGenres = new ArrayList<>();
 
     public GenresAdapter(OnClickGenreListener onClickGenreListener) {
@@ -96,8 +95,6 @@ public class GenresAdapter extends RecyclerView.Adapter<GenresAdapter.Holder> {
                     notifyDataSetChanged();
                 }
             });
-
         }
-
     }
 }

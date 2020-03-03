@@ -5,13 +5,9 @@ import android.content.SharedPreferences;
 import com.example.listoffilmssequenia.data.data.network.Api;
 import com.example.listoffilmssequenia.data.data.prefs.PreferencesHelper;
 import com.example.listoffilmssequenia.data.di.PerActivity;
-import com.example.listoffilmssequenia.data.ui.adapter.FilmsAdapter;
-import com.example.listoffilmssequenia.data.ui.adapter.GenresAdapter;
-import com.example.listoffilmssequenia.data.ui.films.MvpInteractor;
-import com.example.listoffilmssequenia.data.ui.films.MvpPresenter;
-import com.example.listoffilmssequenia.data.ui.films.OnClickFilmListener;
-import com.example.listoffilmssequenia.data.ui.films.OnClickGenreListener;
-import com.example.listoffilmssequenia.data.ui.films.contract.View;
+import com.example.listoffilmssequenia.data.ui.mainactivity.MvpInteractor;
+import com.example.listoffilmssequenia.data.ui.mainactivity.MvpPresenter;
+import com.example.listoffilmssequenia.data.ui.mainactivity.contract.View;
 
 import dagger.Module;
 import dagger.Provides;
@@ -21,15 +17,10 @@ import retrofit2.Retrofit;
 public class FilmsModule {
 
     private View view;
-    private OnClickFilmListener onClickFilmListener;
-    private OnClickGenreListener onClickGenreListener;
     private SharedPreferences sharedPreferences;
 
-    public FilmsModule(View view, OnClickFilmListener onClickFilmListener,
-                       OnClickGenreListener onClickGenreListener, SharedPreferences sharedPreferences) {
+    public FilmsModule(View view, SharedPreferences sharedPreferences) {
         this.view = view;
-        this.onClickFilmListener = onClickFilmListener;
-        this.onClickGenreListener = onClickGenreListener;
         this.sharedPreferences = sharedPreferences;
     }
 
@@ -55,17 +46,5 @@ public class FilmsModule {
     @Provides
     MvpPresenter provideMvpPresenter(MvpInteractor mvpInteractor) {
         return new MvpPresenter(view, mvpInteractor);
-    }
-
-    @PerActivity
-    @Provides
-    FilmsAdapter provideFilmsAdapter() {
-        return new FilmsAdapter(onClickFilmListener);
-    }
-
-    @PerActivity
-    @Provides
-    GenresAdapter provideGenresAdapter() {
-        return new GenresAdapter(onClickGenreListener);
     }
 }

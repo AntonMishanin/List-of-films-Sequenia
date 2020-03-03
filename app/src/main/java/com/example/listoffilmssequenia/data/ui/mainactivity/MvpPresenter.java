@@ -1,10 +1,10 @@
-package com.example.listoffilmssequenia.data.ui.films;
+package com.example.listoffilmssequenia.data.ui.mainactivity;
 
 import com.example.listoffilmssequenia.data.data.model.Film;
 import com.example.listoffilmssequenia.data.data.prefs.PrefModel;
-import com.example.listoffilmssequenia.data.ui.films.contract.OnListOfFilmsListener;
-import com.example.listoffilmssequenia.data.ui.films.contract.Presenter;
-import com.example.listoffilmssequenia.data.ui.films.contract.View;
+import com.example.listoffilmssequenia.data.ui.mainactivity.contract.OnListOfFilmsListener;
+import com.example.listoffilmssequenia.data.ui.mainactivity.contract.Presenter;
+import com.example.listoffilmssequenia.data.ui.mainactivity.contract.View;
 
 import java.util.List;
 
@@ -58,24 +58,19 @@ public class MvpPresenter implements Presenter, OnListOfFilmsListener {
         view.setError(t);
     }
 
-    void setSharedPreferences(PrefModel prefModel) {
-        mvpInteractor.setSharedPreferences(prefModel);
-    }
 
-    void getSharedPreferences() {
-         mvpInteractor.getSharedPreferences(this);
-    }
-
-    public void onClickFilm(int position){
-        mvpInteractor.onClickFilm(position, this);
-    }
-
-    public void setPosition(int position){
-        mvpInteractor.setPosition(position);
+    @Override
+    public void setSharedPreferences() {
+        mvpInteractor.setSharedPreferences();
     }
 
     @Override
-    public void setView(View view) {
-       // this.view = view;
+    public void onClickFilm(int position) {
+        mvpInteractor.onClickFilm(position, this);
+    }
+
+    @Override
+    public void setUncheckedFilmPosition(int position) {
+        mvpInteractor.setUncheckedFilmPosition(position);
     }
 }

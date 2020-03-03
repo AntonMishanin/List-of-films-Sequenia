@@ -2,8 +2,8 @@ package com.example.listoffilmssequenia.data.data.model;
 
 public class Genre {
 
-    String genre;
-    boolean genreChecked;
+   private String genre;
+   private boolean genreChecked;
 
     public Genre(String genre, boolean genreChecked) {
         this.genre = genre;
@@ -12,10 +12,6 @@ public class Genre {
 
     public String getGenre() {
         return genre;
-    }
-
-    public void setGenre(String genre) {
-        this.genre = genre;
     }
 
     public boolean isGenreChecked() {

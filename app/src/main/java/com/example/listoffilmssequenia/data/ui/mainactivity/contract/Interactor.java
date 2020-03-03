@@ -1,4 +1,4 @@
-package com.example.listoffilmssequenia.data.ui.films.contract;
+package com.example.listoffilmssequenia.data.ui.mainactivity.contract;
 
 public interface Interactor {
 

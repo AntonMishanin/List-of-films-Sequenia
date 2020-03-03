@@ -2,9 +2,11 @@ package com.example.listoffilmssequenia.data.ui.details;
 
 
 import android.annotation.SuppressLint;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
@@ -17,10 +19,12 @@ import android.widget.TextView;
 
 import com.example.listoffilmssequenia.R;
 import com.example.listoffilmssequenia.data.data.model.Film;
-import com.example.listoffilmssequenia.data.ui.OnBackClickListener;
+import com.example.listoffilmssequenia.data.ui.mainactivity.OnBackClickListener;
 import com.squareup.picasso.Picasso;
 
-import static com.example.listoffilmssequenia.data.ui.films.ListFilmsFragment.BUNDLE_KEY_CLICKED_FILM;
+import java.util.Objects;
+
+import static com.example.listoffilmssequenia.data.ui.mainactivity.MainActivity.BUNDLE_KEY_CLICKED_FILM;
 
 public class DetailsFilmFragment extends Fragment {
 
@@ -33,13 +37,14 @@ public class DetailsFilmFragment extends Fragment {
     private TextView textDescription;
     private ImageView imageView;
 
-    OnBackClickListener onBackClickListener;
+    private OnBackClickListener onBackClickListener;
 
     private ImageButton toolbarImageButtonBack;
 
     public DetailsFilmFragment() {
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -67,8 +72,9 @@ public class DetailsFilmFragment extends Fragment {
         imageView = view.findViewById(R.id.film_image);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void initToolbar() {
-        Toolbar toolbar = getActivity().findViewById(R.id.toolbar_fragment_details);
+        Toolbar toolbar = Objects.requireNonNull(getActivity()).findViewById(R.id.toolbar_fragment_details);
         toolbarImageButtonBack = toolbar.findViewById(R.id.toolbar_image_button_back);
         toolbarImageButtonBack.setVisibility(View.VISIBLE);
         TextView toolbarTitle = toolbar.findViewById(R.id.toolbar_title);
